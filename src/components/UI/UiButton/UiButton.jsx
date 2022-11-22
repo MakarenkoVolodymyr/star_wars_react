@@ -29,7 +29,7 @@ export default UiButton;
 UiButton.propTypes = {
     text: PropTypes.string,
     onClick: PropTypes.func,
-    text: PropTypes.bool,
+    disabled: PropTypes.bool,
     theme: PropTypes.string,
     classes: PropTypes.string,
 }
