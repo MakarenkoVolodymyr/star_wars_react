@@ -1,10 +1,11 @@
 import PersonPhoto from '@components/PersonPage/PersonPhoto'
 import PersonInfo from '@components/PersonPage/PersonInfo'
+import PersonLinkBack from '@components/PersonPage/PersonLinkBack';
 
-
+import UILoading from '@ui/UILoading';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { getApiResource } from '@utils/network';
 import { getPeopleImage } from '@services/getPeopleData'
 import { API_PERSON } from '@constants/api';
@@ -12,12 +13,14 @@ import { withErrorApi } from '@hoc-helpers/withErrorApi';
 
 import styles from './PersonPage.module.css';
 
+const PersonFilms = React.lazy(() => import('@components/PersonPage/PersonFilms'));
 
 const PersonPage = ({ setErrorApi }) => {
     const id = useParams().id;
     const [personInfo, setPersonInfo] = useState(null);
     const [personName, setPersonName] = useState(null);
     const [personPhoto, setPersonPhoto] = useState(null);
+    const [personFilms, setPersonFilms] = useState(null);
     
     useEffect(()=>{
         (async () => {
@@ -35,24 +38,37 @@ const PersonPage = ({ setErrorApi }) => {
                 ]);
                 setPersonName(res.name);
                 setPersonPhoto(getPeopleImage(id));
+
+                if(res.films.length){
+                    setPersonFilms(res.films);
+                }
             }
             setErrorApi(!res);
         })();
     }, []);
 
   return(
-    <div className={styles.wrapper}>
-        <span className={styles.person__name}>{personName}</span>
-        
-        <div className={styles.container}>
-            <PersonPhoto 
-                personPhoto = {personPhoto}
-                personName = {personName}
-            />
+    <>
+        <PersonLinkBack />
+        <div className={styles.wrapper}>
+            <span className={styles.person__name}>{personName}</span>
+            
+            <div className={styles.container}>
+                <PersonPhoto 
+                    personPhoto = {personPhoto}
+                    personName = {personName}
+                />
 
-            {personInfo && <PersonInfo personInfo = { personInfo }/>}
-        </div>   
-    </div>
+                {personInfo && <PersonInfo personInfo = { personInfo }/>}
+
+                {personFilms && (
+                    <Suspense fallback = {<UILoading theme="white" isShadow />}>
+                         <PersonFilms personFilms = { personFilms }/>
+                    </Suspense>
+                )}
+            </div>   
+        </div>
+    </>
   )
 }
 
