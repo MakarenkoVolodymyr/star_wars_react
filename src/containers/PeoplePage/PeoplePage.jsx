@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
 
 import PeopleList from '@components/PeoplePage/PeopleList';
-import PeopleNavigation from '@components/PeoplePage/PeopleNavigation/PeopleNavigation';
+import PeopleNavigation from '@components/PeoplePage/PeopleNavigation';
 import { withErrorApi } from '@hoc-helpers/withErrorApi';
 import { getApiResource, changeHTTP } from '@utils/network';
 import { getPeopleId, getPeopleImage, getPeoplePageId} from '@services/getPeopleData';

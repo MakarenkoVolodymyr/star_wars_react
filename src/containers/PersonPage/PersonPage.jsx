@@ -4,6 +4,7 @@ import PersonLinkBack from '@components/PersonPage/PersonLinkBack';
 
 import UILoading from '@ui/UILoading';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import React, { useEffect, useState, Suspense } from 'react';
 import { getApiResource } from '@utils/network';
@@ -21,11 +22,16 @@ const PersonPage = ({ setErrorApi }) => {
     const [personName, setPersonName] = useState(null);
     const [personPhoto, setPersonPhoto] = useState(null);
     const [personFilms, setPersonFilms] = useState(null);
-    
+    const [personFavorite, setPersonFavorite] = useState(false);
+
+    const storeData = useSelector(state => state.favoriteReducer);
+
     useEffect(()=>{
         (async () => {
             const res = await getApiResource(`${API_PERSON}/${id}/`);
             
+            storeData[id] ? setPersonFavorite(true) : setPersonFavorite(false);
+
             if(res){
                 setPersonInfo([
                     { title: 'Height', data: res.height },
@@ -55,8 +61,11 @@ const PersonPage = ({ setErrorApi }) => {
             
             <div className={styles.container}>
                 <PersonPhoto 
+                    personId = {id}
                     personPhoto = {personPhoto}
                     personName = {personName}
+                    personFavorite={personFavorite}
+                    setPersonFavorite={setPersonFavorite}
                 />
 
                 {personInfo && <PersonInfo personInfo = { personInfo }/>}
